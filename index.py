@@ -14,6 +14,7 @@ import urllib.request
 TOLERANCIA_MINUTOS = 12
 LIMITE_LECTURAS_REPETIDAS = 10
 ZONA_CHILE = ZoneInfo("America/Santiago")
+ZONA_PASCUA = ZoneInfo("Pacific/Easter")
 ARCHIVO_HISTORIAL = "historial_presion.json"
 ARCHIVO_CONGELADAS = "historial_congeladas.json"
 
@@ -28,7 +29,7 @@ ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 # ==========================================
-# ESTACIONES DIRECTEMAR (Desde Chanaral hasta Pichilemu)
+# ESTACIONES DIRECTEMAR (Clásicas de texto)
 # ==========================================
 ESTACIONES_DIRECTEMAR = [
     {
@@ -48,6 +49,7 @@ ESTACIONES_DIRECTEMAR = [
         "url": "http://web.directemar.cl/met/jturno/estaciones/pascua/index.htm",
         "lat": -27.150,
         "lon": -109.429,
+        "es_insular": True,
     },
     {
         "nombre": "Capitania de Puerto Huasco",
@@ -74,34 +76,10 @@ ESTACIONES_DIRECTEMAR = [
         "lon": -71.531,
     },
     {
-        "nombre": "Universidad de Valparaiso (sede Montemar)",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/montemar/index.htm",
-        "lat": -32.952,
-        "lon": -71.553,
-    },
-    {
         "nombre": "Colegio Capellan Pascal (Las Salinas)",
         "url": "http://web.directemar.cl/met/jturno/estaciones/lassalinas/index.htm",
         "lat": -33.015,
         "lon": -71.550,
-    },
-    {
-        "nombre": "Club de Yates Recreo (Vina del Mar)",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/recreo/index.htm",
-        "lat": -33.027,
-        "lon": -71.554,
-    },
-    {
-        "nombre": "WL Chilquinta Muelle Baron (Valparaiso)",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/baron/index.htm",
-        "lat": -33.042,
-        "lon": -71.603,
-    },
-    {
-        "nombre": "Dique Flotante Valparaiso III",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/diqueflotante/index.htm",
-        "lat": -33.038,
-        "lon": -71.621,
     },
     {
         "nombre": "Faro Extremo Molo de Abrigo Valparaiso",
@@ -130,13 +108,36 @@ ESTACIONES_DIRECTEMAR = [
 ]
 
 # ==========================================
-# ESTACIONES IFOP / API JSON (Otras redes si aplican)
+# ESTACIONES WEATHERLINK (Con sus enlaces correctos)
 # ==========================================
-ESTACIONES_IFOP = [
+ESTACIONES_WEATHERLINK = [
+    {
+        "nombre": "Universidad de Valparaiso (sede Montemar)",
+        "url": "https://weatherlink.com/embeddablePage/show/a1debe35d26b4e2dbcf82122501f5fa6/fullscreen",[cite: 7]
+        "lat": -32.952,
+        "lon": -71.553,
+    },
+    {
+        "nombre": "Club de Yates Recreo (Vina del Mar)",
+        "url": "https://weatherlink.com/embeddablePage/show/0c56339eed4147d4a9240ed0b66c982/fullscreen",[cite: 8]
+        "lat": -33.027,
+        "lon": -71.554,
+    },
+    {
+        "nombre": "WL Chilquinta Muelle Baron (Valparaiso)",
+        "url": "https://weatherlink.com/embeddablePage/show/6342b5802c854216a359487f335f3718/fullscreen",[cite: 9]
+        "lat": -33.042,
+        "lon": -71.603,
+    },
+    {
+        "nombre": "Dique Flotante Valparaiso III",
+        "url": "https://weatherlink.com/embeddablePage/show/1e4869cc59824e6893fc56b963304664/fullscreen",[cite: 10]
+        "lat": -33.038,
+        "lon": -71.621,
+    },
     {
         "nombre": "Cofradia Nautica del Pacifico (Algarrobo)",
-        "url": "https://giscc.ifop.cl/doma_met/",
-        "api_url": "https://giscc.ifop.cl/siom-enoscc//get_est_met/10",
+        "url": "https://weatherlink.com/embeddablePage/show/9fa531d050e648a9a8aa6bb7026c3902/fullscreen",[cite: 11]
         "lat": -33.367,
         "lon": -71.666,
     },
@@ -361,8 +362,15 @@ def consultar_directemar(est):
                     fecha_str = f"{fecha_p} {':'.join(sub_hora)}"
 
             formato_fecha = "%d-%m-%Y %H:%M:%S" if fecha_str.count(":") == 2 else "%d-%m-%Y %H:%M"
-            fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_CHILE)
-            dif_min = abs((obtener_hora_chile() - fecha_estacion).total_seconds() / 60)
+            
+            if est.get("es_insular"):
+                fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_PASCUA)
+                hora_referencia = datetime.now(ZONA_PASCUA)
+            else:
+                fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_CHILE)
+                hora_referencia = obtener_hora_chile()
+
+            dif_min = abs((hora_referencia - fecha_estacion).total_seconds() / 60)
 
             congelada = verificar_estacion_congelada(est["nombre"], temp, viento, racha)
             if congelada:
@@ -377,119 +385,71 @@ def consultar_directemar(est):
         print(f"Error Directemar {est['nombre']}: {e}")
         return False, "SIN CONEXION", "Error de red", "--", "--", "--", "", "--", "--"
 
-def consultar_ifop(est):
+def consultar_weatherlink(est):
     try:
-        req = urllib.request.Request(est["api_url"], headers=HEADERS)
+        req = urllib.request.Request(est["url"], headers=HEADERS)
         with urllib.request.urlopen(req, timeout=10, context=ctx) as response:
-            texto_raw = response.read().decode("utf-8")
-            data = json.loads(texto_raw)
+            html = response.read().decode("utf-8", errors="ignore")
+            
+            texto_plano = re.sub(r'<[^>]+>', ' ', html)
+            texto_plano = texto_plano.replace('\xa5', ' ').replace('\xa0', ' ').replace('&nbsp;', ' ').replace('&deg;', '°').replace('&#176;', '°')
+            texto_plano = re.sub(r'\s+', ' ', texto_plano).strip()
 
-            if isinstance(data, dict):
-                def extraer_datos_serie():
-                    val_t, fecha_t, val_p, p_pasado, val_v, val_r, val_d, val_pp = None, None, None, None, None, None, None, None
-                    hoy_chile = obtener_hora_chile().date()
-                    
-                    for k, serie in data.items():
-                        if isinstance(serie, dict):
-                            k_lower = k.lower().strip()
-                            lista_data = serie.get("data", [])
-                            
-                            if isinstance(lista_data, list) and len(lista_data) > 0:
-                                item_data = lista_data[0]
-                                if isinstance(item_data, dict) and "y" in item_data:
-                                    y_vals = item_data["y"]
-                                    x_vals = item_data.get("x", [])
-                                    if isinstance(y_vals, list) and len(y_vals) > 0:
-                                        actual = y_vals[-1]
-                                        f_act = x_vals[-1] if x_vals and len(x_vals) > 0 else None
-                                        
-                                        if any(sub in k_lower for sub in ["temp", "temperatura", "ta", "t_aire"]):
-                                            val_t, fecha_t = actual, f_act
-                                        elif any(sub in k_lower for sub in ["pres", "presion", "barom", "qfe", "qff"]):
-                                            val_p = actual
-                                            if len(y_vals) >= 180:
-                                                p_pasado = y_vals[-180]
-                                            elif len(y_vals) > 1:
-                                                p_pasado = y_vals[0]
-                                        elif any(sub in k_lower for sub in ["dir_viento", "dd", "dir", "direccion"]):
-                                            val_d = actual
-                                        elif any(sub in k_lower for sub in ["ff", "viento", "speed", "vel", "intensidad"]):
-                                            val_v = actual
-                                        elif any(sub in k_lower for sub in ["racha", "ráfaga", "rafaga", "gust", "max", "fx", "vmax", "vel_max"]):
-                                            val_r = actual
-                                        elif any(sub in k_lower for sub in ["lluvia", "pp", "precip", "precipitacion", "agua", "acum", "mm", "rain"]):
-                                            valores_hoy = []
-                                            if isinstance(x_vals, list) and len(x_vals) == len(y_vals):
-                                                for xv, yv in zip(x_vals, y_vals):
-                                                    if yv is not None and isinstance(yv, (int, float)):
-                                                        try:
-                                                            if isinstance(xv, (int, float)):
-                                                                dt = datetime.fromtimestamp(xv / 1000.0 if xv > 1e11 else xv, tz=ZONA_CHILE)
-                                                            elif isinstance(xv, str):
-                                                                dt = datetime.fromisoformat(xv.replace('Z', '+00:00')).astimezone(ZONA_CHILE)
-                                                            else:
-                                                                dt = None
-                                                            
-                                                            if dt and dt.date() == hoy_chile:
-                                                                valores_hoy.append(yv)
-                                                        except Exception:
-                                                            pass
-                                            
-                                            if valores_hoy:
-                                                val_pp = max(valores_hoy)
-                                            else:
-                                                val_pp = y_vals[-1]
+            temp, pres, viento, dir_viento, racha, precipitacion = "--", "--", "--", "", "--", "--"
+            pres_val = None
 
-                    return val_t, fecha_t, val_p, p_pasado, val_v, val_r, val_d, val_pp
+            # Temperatura: ej. "14°C currently" o similar
+            temp_match = re.search(r'([\-]?\d+(?:[.,]\d+)?)\s*°\s*C\s+currently', texto_plano, re.IGNORECASE)
+            if temp_match:
+                val = convertir_numero(temp_match.group(1))
+                if val is not None:
+                    temp = f"{val:.1f}°C"
 
-                temp_val, fecha_temp, pres_val, pres_pasado_val, viento_val, racha_val, dir_val, pp_val = extraer_datos_serie()
+            # Viento: ej. "Wind: 7 knots SE" o "Wind: 6 km/h WSW"
+            viento_match = re.search(r'Wind\s*[:]\s*(\d+(?:[.,]\d+)?)\s*(?:knots|kt|nudos|km/h)?\s*([N,S,E,W]{1,3})?', texto_plano, re.IGNORECASE)
+            if viento_match:
+                val = convertir_numero(viento_match.group(1))
+                if val is not None:
+                    unidad_v = "km/h" if "km/h" in texto_plano.lower() else "kt" # Mantiene compatibilidad si viene en km/h o nudos
+                    viento = f"{val:.1f} {unidad_v}"
+                if viento_match.group(2):
+                    dir_viento = formatear_direccion(viento_match.group(2))
 
-                temp_f = convertir_numero(temp_val)
-                temp = f"{temp_f:.1f}°C" if temp_f is not None else "--"
+            # Racha: ej. "High gust 15 knots at 01:11"
+            racha_match = re.search(r'High\s+gust\s*(\d+(?:[.,]\d+)?)\s*(?:knots|kt|nudos|km/h)?', texto_plano, re.IGNORECASE)
+            if racha_match:
+                val = convertir_numero(racha_match.group(1))
+                if val is not None:
+                    racha = f"{val:.1f} kt"
 
-                pres_f = convertir_numero(pres_val)
-                tendencia_ifop = ""
-                if pres_f is not None:
-                    p_pasado_f = convertir_numero(pres_pasado_val)
-                    if p_pasado_f is not None:
-                        dif = pres_f - p_pasado_f
-                        if dif > 0.2: tendencia_ifop = " ↗"
-                        elif dif < -0.2: tendencia_ifop = " ↘"
-                        else: tendencia_ifop = " ➔"
-                    pres = f"{pres_f:.1f} hPa{tendencia_ifop}"
-                else:
-                    pres = "--"
+            # Presión: ej. "Barometer: 1,012.9 hPa" o "1,012.1 mb"
+            pres_match = re.search(r'Barometer\s*[:]?\s*([\d.,]+)\s*(?:hPa|mb)', texto_plano, re.IGNORECASE)
+            if pres_match:
+                pres_val = convertir_numero(pres_match.group(1))
+                if pres_val is not None:
+                    tendencia = gestionar_historial_presion(est["nombre"], pres_val)
+                    pres = f"{pres_val:.1f} hPa{tendencia}"
 
-                viento_f = convertir_numero(viento_val)
-                viento = f"{viento_f:.1f} kt" if viento_f is not None else "--"
+            # Precipitación: ej. "Rain: 0.4 mm"
+            pp_match = re.search(r'Rain\s*[:]?\s*([\d.,]+)\s*mm', texto_plano, re.IGNORECASE)
+            if pp_match:
+                val = convertir_numero(pp_match.group(1))
+                if val is not None:
+                    precipitacion = f"{val:.1f} mm"
 
-                racha_f = convertir_numero(racha_val)
-                racha = f"{racha_f:.1f} kt" if racha_f is not None else "--"
+            match_fecha = re.search(r'Weather\s+Conditions\s+as\s+of\s*[:]?\s*([^\n]+)', texto_plano, re.IGNORECASE)
+            fecha_str = match_fecha.group(1).strip() if match_fecha else "Reciente"
 
-                pp_f = convertir_numero(pp_val)
-                precipitacion = f"{pp_f:.1f} mm" if pp_f is not None else "--"
+            es_valido = (temp != "--" or viento != "--" or pres != "--")
+            congelada = verificar_estacion_congelada(est["nombre"], temp, viento, racha)
+            if congelada:
+                return False, f"CONGELADA ({LIMITE_LECTURAS_REPETIDAS} lect. iguales)", fecha_str, temp, pres, viento, dir_viento, racha, precipitacion
 
-                dir_num = convertir_numero(dir_val)
-                if dir_num is not None:
-                    dir_viento = grados_a_cardinal(dir_num)
-                else:
-                    dir_viento = formatear_direccion(str(dir_val)) if dir_val is not None else ""
-
-                fecha_str = str(fecha_temp) if fecha_temp else "Reciente"
-                es_valido = (temp_f is not None or viento_f is not None or pres_f is not None or pp_f is not None)
-                
-                congelada = verificar_estacion_congelada(est["nombre"], temp, viento, racha)
-                if congelada:
-                    return False, f"CONGELADA ({LIMITE_LECTURAS_REPETIDAS} lect. iguales)", fecha_str, temp, pres, viento, dir_viento, racha, precipitacion
-
-                estado_txt = "OPERATIVA" if es_valido else "SIN DATOS VALIDOS"
-
-                return es_valido, estado_txt, fecha_str, temp, pres, viento, dir_viento, racha, precipitacion
-
-            return False, "DATOS NO VALIDOS", "Estructura desconocida", "--", "--", "--", "", "--", "--"
+            estado_txt = "OPERATIVA" if es_valido else "SIN DATOS VALIDOS"
+            return es_valido, estado_txt, fecha_str, temp, pres, viento, dir_viento, racha, precipitacion
 
     except Exception as e:
-        print(f"Error IFOP [{est['nombre']}]: {e}")
+        print(f"Error WeatherLink [{est['nombre']}]: {e}")
         return False, "SIN CONEXION", str(e)[:30], "--", "--", "--", "", "--", "--"
 
 def generar_html(resultados_totales, hay_alerta):
@@ -874,6 +834,7 @@ def ejecutar_monitoreo():
     resultados_dict = {}
     hubo_fallas = False
 
+    # 1. Consultar estaciones Directemar clásicas
     for est in ESTACIONES_DIRECTEMAR:
         ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_directemar(est)
         if not ok: hubo_fallas = True
@@ -883,11 +844,12 @@ def ejecutar_monitoreo():
             "viento": viento, "dir_viento": dir_viento, "racha": racha, "precipitacion": precipitacion
         }
 
-    for est_ifop in ESTACIONES_IFOP:
-        ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_ifop(est_ifop)
+    # 2. Consultar estaciones WeatherLink
+    for est_wl in ESTACIONES_WEATHERLINK:
+        ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_weatherlink(est_wl)
         if not ok: hubo_fallas = True
-        resultados_dict[est_ifop["nombre"]] = {
-            "nombre": est_ifop["nombre"], "url": est_ifop["url"], "lat": est_ifop["lat"], "lon": est_ifop["lon"],
+        resultados_dict[est_wl["nombre"]] = {
+            "nombre": est_wl["nombre"], "url": est_wl["url"], "lat": est_wl["lat"], "lon": est_wl["lon"],
             "ok": ok, "estado": estado, "ultimo": ultimo, "temp": temp, "pres": pres,
             "viento": viento, "dir_viento": dir_viento, "racha": racha, "precipitacion": precipitacion
         }
@@ -902,7 +864,7 @@ def subir_a_github():
     try:
         print("Sincronizando cambios con GitHub...")
         subprocess.run(["git", "add", "index.html", "estado_leds.json", ARCHIVO_HISTORIAL, ARCHIVO_CONGELADAS], check=True)
-        resultado = subprocess.run(["git", "commit", "-m", "Corregir enlaces de estaciones a formato Directemar y actualizar monitor [skip ci]"], capture_output=True, text=True)
+        resultado = subprocess.run(["git", "commit", "-m", "Actualizar enlaces WeatherLink individuales [skip ci]"], capture_output=True, text=True)
         if resultado.returncode != 0:
             if "nothing to commit" in (resultado.stdout + resultado.stderr).lower():
                 print("Sin cambios nuevos para subir.")
