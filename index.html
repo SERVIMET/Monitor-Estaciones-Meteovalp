@@ -225,9 +225,9 @@
     </div>
     <h1>Monitor de Estaciones Automaticas</h1>
     <div class="subtitle-line2">Centro Zonal de Meteorologia Marina de Talcahuano</div>
-    <div class="subtitle">Ultima verificacion: 06-10-2026 00:30:28 (Tolerancia: 12 min)</div>
+    <div class="subtitle">Ultima verificacion: 06-10-2026 00:35:25 (Tolerancia: 12 min)</div>
     <div class="banner-alerta">⚠️ ¡ATENCION: HAY ESTACIONES CON FALLAS, DESACTUALIZADAS O CONGELADAS! ⚠️</div>
-    <div class="summary">Estaciones Operativas: 6 de 18</div>
+    <div class="summary">Estaciones Operativas: 6 de 17</div>
     <div id="map"></div>
     <div class="grid">
         
@@ -543,36 +543,10 @@
             </div>
         </a>
         
-        <a href="http://web.directemar.cl/met/jturno/estaciones/molo/index.htm" target="_blank" class="card-link">
-            <div class="card error">
-                <div class="card-header">
-                    <span class="station-name">Faro Extremo Molo de Abrigo Valparaiso</span>
-                    <span class="status-badge">🔴</span>
-                </div>
-                
-            <div class="card-body-content">
-                <div class="row-top">
-                    <div class="item-box temp-box">🌡️ --</div>
-                    <div class="item-box"><span style="display: block; font-size: 0.58em; color: transparent; font-weight: 800; line-height: 1.1; user-select: none;">-</span><span style="display: block; font-size: 0.72em; font-weight: 700; line-height: 1.1;">--</span></div>
-                    <div class="item-box"><span style="font-size: 0.58em; color: var(--wind-color, #1d4ed8); font-weight: 800; display: block; line-height: 1.1;">💨 RACHA</span><span style="font-size: 0.72em; font-weight: 700; line-height: 1.1;">--</span></div>
-                </div>
-                <div class="row-bottom">
-                    <div class="item-box"><span style="font-size: 0.68em; font-weight: 700;">⏲️ --</span></div>
-                    <div class="item-box"><span style="font-size: 0.68em; font-weight: 700;">🌧️ --</span></div>
-                </div>
-            </div>
-        
-                <div class="card-footer-info">
-                    <span class="time">Reporte: Error de red</span>
-                    <span class="click-text">Ver ↗</span>
-                </div>
-            </div>
-        </a>
-        
         <a href="http://web.directemar.cl/met/jturno/estaciones/valparaiso/index.htm" target="_blank" class="card-link">
             <div class="card ok">
                 <div class="card-header">
-                    <span class="station-name">Gobernacion Maritima de Valparaiso</span>
+                    <span class="station-name">Faro Extremo Molo de Abrigo Valparaiso</span>
                     <span class="status-badge">🟢</span>
                 </div>
                 
@@ -716,7 +690,7 @@
         
         L.circleMarker([-27.068, -70.819], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Caldera</b><br>Estado: DESACTUALIZADA (36810 min)<br>Temp: 17.1°C | Viento: 5.2 kt (W/SW) | Racha: 8.7 kt | Pres: 1016.2 hPa | Lluvia: 0.0 mm<br>Reporte: 10-09-2026 11:00:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/caldera/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Caldera</b><br>Estado: DESACTUALIZADA (36815 min)<br>Temp: 17.1°C | Viento: 5.2 kt (W/SW) | Racha: 8.7 kt | Pres: 1016.2 hPa | Lluvia: 0.0 mm<br>Reporte: 10-09-2026 11:00:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/caldera/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-27.15, -109.429], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
@@ -732,7 +706,7 @@
         
         L.circleMarker([-31.916, -71.516], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Los Vilos</b><br>Estado: DESACTUALIZADA (460 min)<br>Temp: 21.0°C | Viento: 11.3 kt (NE) | Racha: 15.7 kt | Pres: 1010.9 hPa | Lluvia: 0.0 mm<br>Reporte: 05-10-2026 16:50:19<br><a href='http://web.directemar.cl/met/jturno/estaciones/losvilos/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Los Vilos</b><br>Estado: DESACTUALIZADA (465 min)<br>Temp: 21.0°C | Viento: 11.3 kt (NE) | Racha: 15.7 kt | Pres: 1010.9 hPa | Lluvia: 0.0 mm<br>Reporte: 05-10-2026 16:50:19<br><a href='http://web.directemar.cl/met/jturno/estaciones/losvilos/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-32.778, -71.531], {
             color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
@@ -759,12 +733,8 @@
         }).addTo(map).bindPopup("<b>Dique Flotante Valparaiso III</b><br>Estado: SIN CONEXION<br>Temp: -- | Viento: -- | Racha: -- | Pres: -- | Lluvia: --<br>Reporte: Error de red<br><a href='http://web.directemar.cl/met/jturno/estaciones/diqueflotante/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-33.036, -71.631], {
-            color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Faro Extremo Molo de Abrigo Valparaiso</b><br>Estado: SIN CONEXION<br>Temp: -- | Viento: -- | Racha: -- | Pres: -- | Lluvia: --<br>Reporte: Error de red<br><a href='http://web.directemar.cl/met/jturno/estaciones/molo/index.htm' target='_blank'>Abrir enlace ↗</a>");
-        
-        L.circleMarker([-33.036, -71.625], {
             color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Gobernacion Maritima de Valparaiso</b><br>Estado: OPERATIVA<br>Temp: 14.4°C | Viento: 7.6 kt (SE) | Racha: 8.7 kt | Pres: 1014.5 hPa | Lluvia: 0.7 mm<br>Reporte: 06-10-2026 00:30:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/valparaiso/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Faro Extremo Molo de Abrigo Valparaiso</b><br>Estado: OPERATIVA<br>Temp: 14.4°C | Viento: 7.6 kt (SE) | Racha: 8.7 kt | Pres: 1014.5 hPa | Lluvia: 0.7 mm<br>Reporte: 06-10-2026 00:30:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/valparaiso/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-33.367, -71.666], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
@@ -772,7 +742,7 @@
         
         L.circleMarker([-33.578, -71.616], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Faro Punta Panul San Antonio</b><br>Estado: DESACTUALIZADA (40 min)<br>Temp: 13.8°C | Viento: 9.4 kt (NE) | Racha: 13.9 kt | Pres: 1014.1 hPa | Lluvia: 1.6 mm<br>Reporte: 05-10-2026 23:50:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/panul/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Faro Punta Panul San Antonio</b><br>Estado: DESACTUALIZADA (45 min)<br>Temp: 13.8°C | Viento: 9.4 kt (NE) | Racha: 13.9 kt | Pres: 1014.1 hPa | Lluvia: 1.6 mm<br>Reporte: 05-10-2026 23:50:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/panul/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-33.635, -78.841], {
             color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
@@ -780,7 +750,7 @@
         
         L.circleMarker([-34.391, -72.001], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Pichilemu</b><br>Estado: DESACTUALIZADA (45 min)<br>Temp: 14.2°C | Viento: 13.2 kt (NE) | Racha: 17.4 kt | Pres: 1011.9 hPa | Lluvia: 0.0 mm<br>Reporte: 05-10-2026 23:45:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/pichilemu/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Pichilemu</b><br>Estado: DESACTUALIZADA (50 min)<br>Temp: 14.2°C | Viento: 13.2 kt (NE) | Racha: 17.4 kt | Pres: 1011.9 hPa | Lluvia: 0.0 mm<br>Reporte: 05-10-2026 23:45:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/pichilemu/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
 
         function toggleDarkMode() {
