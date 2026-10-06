@@ -113,31 +113,31 @@ ESTACIONES_DIRECTEMAR = [
 ESTACIONES_WEATHERLINK = [
     {
         "nombre": "Universidad de Valparaiso (sede Montemar)",
-        "url": "https://weatherlink.com/embeddablePage/show/a1debe35d26b4e2dbcf82122501f5fa6/fullscreen",[cite: 7]
+        "url": "https://weatherlink.com/embeddablePage/show/a1debe35d26b4e2dbcf82122501f5fa6/fullscreen",
         "lat": -32.952,
         "lon": -71.553,
     },
     {
         "nombre": "Club de Yates Recreo (Vina del Mar)",
-        "url": "https://weatherlink.com/embeddablePage/show/0c56339eed4147d4a9240ed0b66c982/fullscreen",[cite: 8]
+        "url": "https://weatherlink.com/embeddablePage/show/0c66339eed4f47d4a9240ed0b66c992/fullscreen",
         "lat": -33.027,
         "lon": -71.554,
     },
     {
         "nombre": "WL Chilquinta Muelle Baron (Valparaiso)",
-        "url": "https://weatherlink.com/embeddablePage/show/6342b5802c854216a359487f335f3718/fullscreen",[cite: 9]
+        "url": "https://weatherlink.com/embeddablePage/show/6342b5802c854216a359487f335f3718/fullscreen",
         "lat": -33.042,
         "lon": -71.603,
     },
     {
         "nombre": "Dique Flotante Valparaiso III",
-        "url": "https://weatherlink.com/embeddablePage/show/1e4869cc59824e6893fc56b963304664/fullscreen",[cite: 10]
+        "url": "https://weatherlink.com/embeddablePage/show/1e4869cc59824e6893fc56b963304664/fullscreen",
         "lat": -33.038,
         "lon": -71.621,
     },
     {
         "nombre": "Cofradia Nautica del Pacifico (Algarrobo)",
-        "url": "https://weatherlink.com/embeddablePage/show/9fa531d050e648a9a8aa6bb7026c3902/fullscreen",[cite: 11]
+        "url": "https://weatherlink.com/embeddablePage/show/9fa531d050e648a9a8aa6bb7026c3902/fullscreen",
         "lat": -33.367,
         "lon": -71.666,
     },
@@ -398,31 +398,27 @@ def consultar_weatherlink(est):
             temp, pres, viento, dir_viento, racha, precipitacion = "--", "--", "--", "", "--", "--"
             pres_val = None
 
-            # Temperatura: ej. "14°C currently" o similar
             temp_match = re.search(r'([\-]?\d+(?:[.,]\d+)?)\s*°\s*C\s+currently', texto_plano, re.IGNORECASE)
             if temp_match:
                 val = convertir_numero(temp_match.group(1))
                 if val is not None:
                     temp = f"{val:.1f}°C"
 
-            # Viento: ej. "Wind: 7 knots SE" o "Wind: 6 km/h WSW"
             viento_match = re.search(r'Wind\s*[:]\s*(\d+(?:[.,]\d+)?)\s*(?:knots|kt|nudos|km/h)?\s*([N,S,E,W]{1,3})?', texto_plano, re.IGNORECASE)
             if viento_match:
                 val = convertir_numero(viento_match.group(1))
                 if val is not None:
-                    unidad_v = "km/h" if "km/h" in texto_plano.lower() else "kt" # Mantiene compatibilidad si viene en km/h o nudos
+                    unidad_v = "km/h" if "km/h" in texto_plano.lower() else "kt"
                     viento = f"{val:.1f} {unidad_v}"
                 if viento_match.group(2):
                     dir_viento = formatear_direccion(viento_match.group(2))
 
-            # Racha: ej. "High gust 15 knots at 01:11"
             racha_match = re.search(r'High\s+gust\s*(\d+(?:[.,]\d+)?)\s*(?:knots|kt|nudos|km/h)?', texto_plano, re.IGNORECASE)
             if racha_match:
                 val = convertir_numero(racha_match.group(1))
                 if val is not None:
                     racha = f"{val:.1f} kt"
 
-            # Presión: ej. "Barometer: 1,012.9 hPa" o "1,012.1 mb"
             pres_match = re.search(r'Barometer\s*[:]?\s*([\d.,]+)\s*(?:hPa|mb)', texto_plano, re.IGNORECASE)
             if pres_match:
                 pres_val = convertir_numero(pres_match.group(1))
@@ -430,7 +426,6 @@ def consultar_weatherlink(est):
                     tendencia = gestionar_historial_presion(est["nombre"], pres_val)
                     pres = f"{pres_val:.1f} hPa{tendencia}"
 
-            # Precipitación: ej. "Rain: 0.4 mm"
             pp_match = re.search(r'Rain\s*[:]?\s*([\d.,]+)\s*mm', texto_plano, re.IGNORECASE)
             if pp_match:
                 val = convertir_numero(pp_match.group(1))
@@ -834,7 +829,6 @@ def ejecutar_monitoreo():
     resultados_dict = {}
     hubo_fallas = False
 
-    # 1. Consultar estaciones Directemar clásicas
     for est in ESTACIONES_DIRECTEMAR:
         ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_directemar(est)
         if not ok: hubo_fallas = True
@@ -844,7 +838,6 @@ def ejecutar_monitoreo():
             "viento": viento, "dir_viento": dir_viento, "racha": racha, "precipitacion": precipitacion
         }
 
-    # 2. Consultar estaciones WeatherLink
     for est_wl in ESTACIONES_WEATHERLINK:
         ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_weatherlink(est_wl)
         if not ok: hubo_fallas = True
