@@ -9,7 +9,7 @@ import time
 import urllib.request
 
 # ==========================================
-# CONFIGURACIÓN GENERAL
+# CONFIGURACION GENERAL
 # ==========================================
 TOLERANCIA_MINUTOS = 12
 LIMITE_LECTURAS_REPETIDAS = 10
@@ -28,7 +28,7 @@ ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 # ==========================================
-# ESTACIONES DIRECTEMAR
+# ESTACIONES DIRECTEMAR (Desde Chanaral hasta Pichilemu)
 # ==========================================
 ESTACIONES_DIRECTEMAR = [
     {
@@ -54,6 +54,12 @@ ESTACIONES_DIRECTEMAR = [
         "url": "http://web.directemar.cl/met/jturno/estaciones/huasco/index.htm",
         "lat": -28.468,
         "lon": -71.226,
+    },
+    {
+        "nombre": "Faro Punta Tortuga Coquimbo",
+        "url": "http://web.directemar.cl/met/jturno/estaciones/tortuga/index.htm",
+        "lat": -29.939,
+        "lon": -71.352,
     },
     {
         "nombre": "Capitania de Puerto Los Vilos",
@@ -98,10 +104,22 @@ ESTACIONES_DIRECTEMAR = [
         "lon": -71.621,
     },
     {
+        "nombre": "Faro Extremo Molo de Abrigo Valparaiso",
+        "url": "http://web.directemar.cl/met/jturno/estaciones/molo/index.htm",
+        "lat": -33.036,
+        "lon": -71.631,
+    },
+    {
         "nombre": "Gobernacion Maritima de Valparaiso",
         "url": "http://web.directemar.cl/met/jturno/estaciones/valparaiso/index.htm",
         "lat": -33.036,
         "lon": -71.625,
+    },
+    {
+        "nombre": "Faro Punta Panul San Antonio",
+        "url": "http://web.directemar.cl/met/jturno/estaciones/panul/index.htm",
+        "lat": -33.578,
+        "lon": -71.616,
     },
     {
         "nombre": "Capitania de Puerto Juan Fernandez",
@@ -118,45 +136,19 @@ ESTACIONES_DIRECTEMAR = [
 ]
 
 # ==========================================
-# FAROS WEATHER UNDERGROUND
-# ==========================================
-ESTACIONES_FAROS = [
-    {
-        "nombre": "Faro Punta Tortuga Coquimbo",
-        "id": "ICOHUE2", # Ajustar ID de Wunderground si corresponde
-        "url": "https://www.wunderground.com/dashboard/pws/ICOHUE2",
-        "lat": -29.939,
-        "lon": -71.352,
-    },
-    {
-        "nombre": "Faro Extremo Molo de Abrigo Valparaiso",
-        "id": "IVALPA10", # Ajustar ID de Wunderground si corresponde
-        "url": "https://www.wunderground.com/dashboard/pws/IVALPA10",
-        "lat": -33.036,
-        "lon": -71.631,
-    },
-    {
-        "nombre": "Faro Punta Panul San Antonio",
-        "id": "ISANAN2", # Ajustar ID de Wunderground si corresponde
-        "url": "https://www.wunderground.com/dashboard/pws/ISANAN2",
-        "lat": -33.578,
-        "lon": -71.616,
-    },
-]
-
-# ==========================================
-# ESTACIONES IFOP / API JSON
+# ESTACIONES IFOP / API JSON (Otras redes si aplican)
 # ==========================================
 ESTACIONES_IFOP = [
     {
         "nombre": "Cofradia Nautica del Pacifico (Algarrobo)",
         "url": "https://giscc.ifop.cl/doma_met/",
-        "api_url": "https://giscc.ifop.cl/siom-enoscc//get_est_met/10", # ID referencial a actualizar si es necesario
+        "api_url": "https://giscc.ifop.cl/siom-enoscc//get_est_met/10",
         "lat": -33.367,
         "lon": -71.666,
     },
 ]
 
+# Lista para el orden visual en la grilla y mapa
 ORDEN_ESTACIONES = [
     "Capitania de Puerto Chanaral",
     "Capitania de Puerto Caldera",
@@ -390,53 +382,6 @@ def consultar_directemar(est):
     except Exception as e:
         print(f"Error Directemar {est['nombre']}: {e}")
         return False, "SIN CONEXION", "Error de red", "--", "--", "--", "", "--", "--"
-
-def consultar_wunderground_web(est):
-    try:
-        api_url = f"https://api.weather.com/v2/pws/observations/current?stationId={est['id']}&format=json&units=e&apiKey=e1f10a1e78da46f5b10a1e78da96f525"
-        req = urllib.request.Request(api_url, headers=HEADERS)
-        with urllib.request.urlopen(req, timeout=10, context=ctx) as response:
-            data = json.loads(response.read().decode("utf-8"))
-            obs = data["observations"][0]
-            imperial = obs["imperial"]
-
-            temp_f = imperial.get("temp")
-            temp = f"{(temp_f - 32.0) * 5.0 / 9.0:.1f}°C" if temp_f is not None else "--"
-
-            pres_inHg = imperial.get("pressure")
-            pres = "--"
-            if pres_inHg is not None:
-                pres_val = pres_inHg * 33.86389
-                tendencia = gestionar_historial_presion(est["nombre"], pres_val)
-                pres = f"{pres_val:.1f} hPa{tendencia}"
-
-            viento_mph = imperial.get("windSpeed")
-            viento = f"{viento_mph / 1.15077945:.1f} kt" if viento_mph is not None else "--"
-
-            gust_mph = imperial.get("windGust")
-            racha = f"{gust_mph / 1.15077945:.1f} kt" if gust_mph is not None else "--"
-
-            wind_dir_deg = obs.get("winddir")
-            dir_viento = grados_a_cardinal(wind_dir_deg)
-
-            precip_in = imperial.get("precipTotal", 0.0)
-            if precip_in is not None:
-                precip_mm = precip_in * 25.4
-                precipitacion = f"{precip_mm:.1f} mm"
-            else:
-                precipitacion = "0.0 mm"
-
-            obs_time = obs.get("obsTimeLocal", "Reciente")
-
-            congelada = verificar_estacion_congelada(est["nombre"], temp, viento, racha)
-            if congelada:
-                return False, f"CONGELADA ({LIMITE_LECTURAS_REPETIDAS} lect. iguales)", temp, pres, viento, dir_viento, racha, precipitacion, str(obs_time)
-
-            return True, "OPERATIVA", temp, pres, viento, dir_viento, racha, precipitacion, str(obs_time)
-    except Exception as e:
-        print(f"Error WU [{est['nombre']}]: {e}")
-        
-    return False, "SIN CONEXION", "--", "--", "--", "", "--", "--", "Error de red"
 
 def consultar_ifop(est):
     try:
@@ -944,15 +889,6 @@ def ejecutar_monitoreo():
             "viento": viento, "dir_viento": dir_viento, "racha": racha, "precipitacion": precipitacion
         }
 
-    for faro in ESTACIONES_FAROS:
-        ok, estado, temp, pres, viento, dir_viento, racha, precipitacion, ultimo = consultar_wunderground_web(faro)
-        if not ok: hubo_fallas = True
-        resultados_dict[faro["nombre"]] = {
-            "nombre": faro["nombre"], "url": faro["url"], "lat": faro["lat"], "lon": faro["lon"],
-            "ok": ok, "estado": estado, "ultimo": ultimo, "temp": temp, "pres": pres,
-            "viento": viento, "dir_viento": dir_viento, "racha": racha, "precipitacion": precipitacion
-        }
-
     for est_ifop in ESTACIONES_IFOP:
         ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_ifop(est_ifop)
         if not ok: hubo_fallas = True
@@ -972,7 +908,7 @@ def subir_a_github():
     try:
         print("Sincronizando cambios con GitHub...")
         subprocess.run(["git", "add", "index.html", "estado_leds.json", ARCHIVO_HISTORIAL, ARCHIVO_CONGELADAS], check=True)
-        resultado = subprocess.run(["git", "commit", "-m", "Actualizar index, JSON de LEDs e historial con nuevas estaciones [skip ci]"], capture_output=True, text=True)
+        resultado = subprocess.run(["git", "commit", "-m", "Corregir enlaces de estaciones a formato Directemar y actualizar monitor [skip ci]"], capture_output=True, text=True)
         if resultado.returncode != 0:
             if "nothing to commit" in (resultado.stdout + resultado.stderr).lower():
                 print("Sin cambios nuevos para subir.")
