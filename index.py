@@ -98,6 +98,7 @@ ESTACIONES_DIRECTEMAR = [
         "url": "http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm",
         "lat": -33.635,
         "lon": -78.841,
+        "es_insular": True,
     },
     {
         "nombre": "Capitania de Puerto Pichilemu",
@@ -363,10 +364,11 @@ def consultar_directemar(est):
 
             formato_fecha = "%d-%m-%Y %H:%M:%S" if fecha_str.count(":") == 2 else "%d-%m-%Y %H:%M"
             
-            # Validación con conversión UTC para estaciones insulares
+            # Validación con zona horaria estricta e independiente para insulares
             if est.get("es_insular"):
                 fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_PASCUA)
-                dif_min = abs((datetime.now(timezone.utc) - fecha_estacion.astimezone(timezone.utc)).total_seconds() / 60)
+                ahora_insular = datetime.now(ZONA_PASCUA)
+                dif_min = abs((ahora_insular - fecha_estacion).total_seconds() / 60)
             else:
                 fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_CHILE)
                 hora_referencia = obtener_hora_chile()
@@ -857,7 +859,7 @@ def subir_a_github():
     try:
         print("Sincronizando cambios con GitHub...")
         subprocess.run(["git", "add", "index.html", "estado_leds.json", ARCHIVO_HISTORIAL, ARCHIVO_CONGELADAS], check=True)
-        resultado = subprocess.run(["git", "commit", "-m", "Correccion definitiva zona horaria Hanga Roa [skip ci]"], capture_output=True, text=True)
+        resultado = subprocess.run(["git", "commit", "-m", "Correccion definitiva zona horaria Hanga Roa e insulares [skip ci]"], capture_output=True, text=True)
         if resultado.returncode != 0:
             if "nothing to commit" in (resultado.stdout + resultado.stderr).lower():
                 print("Sin cambios nuevos para subir.")
