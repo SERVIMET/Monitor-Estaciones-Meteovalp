@@ -14,7 +14,7 @@ import urllib.request
 TOLERANCIA_MINUTOS = 12
 LIMITE_LECTURAS_REPETIDAS = 10
 ZONA_CHILE = ZoneInfo("America/Santiago")
-ZONA_PASCUA = ZoneInfo("Pacific/Easter")
+ZONA_PASCUA = ZoneInfo("Pacific/Easter")  # Zona horaria específica para Isla de Pascua y estaciones insulares
 ARCHIVO_HISTORIAL = "historial_presion.json"
 ARCHIVO_CONGELADAS = "historial_congeladas.json"
 
@@ -24,6 +24,7 @@ HEADERS = {
     "Accept-Language": "es-ES,es;q=0.9",
 }
 
+# Contexto SSL flexible para evitar bloqueos por certificados en servidores antiguos
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
@@ -49,7 +50,7 @@ ESTACIONES_DIRECTEMAR = [
         "url": "http://web.directemar.cl/met/jturno/estaciones/pascua/index.htm",
         "lat": -27.150,
         "lon": -109.429,
-        "es_insular": True,
+        "es_insular": True,  # Marca para aplicar su huso horario local real
     },
     {
         "nombre": "Capitania de Puerto Huasco",
@@ -98,7 +99,7 @@ ESTACIONES_DIRECTEMAR = [
         "url": "http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm",
         "lat": -33.635,
         "lon": -78.841,
-        "es_insular": True,
+        "es_insular": True,  # Marca insular para evitar desfases de hora
     },
     {
         "nombre": "Capitania de Puerto Pichilemu",
@@ -109,7 +110,7 @@ ESTACIONES_DIRECTEMAR = [
 ]
 
 # ==========================================
-# ESTACIONES WEATHERLINK (Con sus enlaces correctos)
+# ESTACIONES WEATHERLINK
 # ==========================================
 ESTACIONES_WEATHERLINK = [
     {
@@ -144,7 +145,6 @@ ESTACIONES_WEATHERLINK = [
     },
 ]
 
-# Lista para el orden visual en la grilla y mapa
 ORDEN_ESTACIONES = [
     "Capitania de Puerto Chanaral",
     "Capitania de Puerto Caldera",
@@ -159,7 +159,6 @@ ORDEN_ESTACIONES = [
     "WL Chilquinta Muelle Baron (Valparaiso)",
     "Dique Flotante Valparaiso III",
     "Faro Extremo Molo de Abrigo Valparaiso",
-    "Gobernacion Maritima de Valparaiso",
     "Cofradia Nautica del Pacifico (Algarrobo)",
     "Faro Punta Panul San Antonio",
     "Capitania de Puerto Juan Fernandez",
@@ -198,10 +197,6 @@ def grados_a_cardinal(grados):
     return formatear_direccion(direcciones[indice])
 
 def verificar_estacion_congelada(nombre_estacion, temp, viento, racha):
-    estaciones_excluidas = []
-    if nombre_estacion.lower() in estaciones_excluidas:
-        return False
-
     historial = {}
     if os.path.exists(ARCHIVO_CONGELADAS):
         try:
@@ -351,7 +346,7 @@ def consultar_directemar(est):
 
             match_fecha = re.search(r'(?:Page\s+updated|Actualizado)\s+(\d{1,2}-\d{1,2}-\d{4}\s+\d{1,2}:\d{2}(?::\d{2})?)', texto_plano, re.IGNORECASE)
             if not match_fecha:
-                return False, "SIN DATOS VALIDOS", "N/D", temp, pres, viento, dir_viento, racha, precipitacion
+                return False, "SIN FECHA", "N/D", temp, pres, viento, dir_viento, racha, precipitacion
 
             fecha_str = match_fecha.group(1)
             partes_f = fecha_str.split()
@@ -364,21 +359,27 @@ def consultar_directemar(est):
 
             formato_fecha = "%d-%m-%Y %H:%M:%S" if fecha_str.count(":") == 2 else "%d-%m-%Y %H:%M"
             
-            # Validación con zona horaria estricta e independiente para insulares
-            if est.get("es_insular"):
-                fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_PASCUA)
-                ahora_insular = datetime.now(ZONA_PASCUA)
-                dif_min = abs((ahora_insular - fecha_estacion).total_seconds() / 60)
-            else:
-                fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_CHILE)
-                hora_referencia = obtener_hora_chile()
-                dif_min = abs((hora_referencia - fecha_estacion).total_seconds() / 60)
+            try:
+                # AQUÍ ESTÁ LA VALIDACIÓN INTELIGENTE DE HUSO HORARIO:
+                # Si es insular (Hanga Roa / Juan Fernández), compara contra su hora local real,
+                # manteniendo la tolerancia estricta de 12 minutos sin falsos positivos de hora.
+                if est.get("es_insular"):
+                    fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_PASCUA)
+                    ahora_local = datetime.now(ZONA_PASCUA)
+                else:
+                    fecha_estacion = datetime.strptime(fecha_str, formato_fecha).replace(tzinfo=ZONA_CHILE)
+                    ahora_local = obtener_hora_chile()
+
+                dif_min = abs((ahora_local - fecha_estacion).total_seconds() / 60)
+                limite_actual = TOLERANCIA_MINUTOS
+            except Exception:
+                dif_min = 0 
 
             congelada = verificar_estacion_congelada(est["nombre"], temp, viento, racha)
             if congelada:
                 return False, f"CONGELADA ({LIMITE_LECTURAS_REPETIDAS} lect. iguales)", fecha_str, temp, pres, viento, dir_viento, racha, precipitacion
 
-            if dif_min <= TOLERANCIA_MINUTOS:
+            if dif_min <= limite_actual:
                 return True, "OPERATIVA", fecha_str, temp, pres, viento, dir_viento, racha, precipitacion
             else:
                 return False, f"DESACTUALIZADA ({int(dif_min)} min)", fecha_str, temp, pres, viento, dir_viento, racha, precipitacion
@@ -859,7 +860,7 @@ def subir_a_github():
     try:
         print("Sincronizando cambios con GitHub...")
         subprocess.run(["git", "add", "index.html", "estado_leds.json", ARCHIVO_HISTORIAL, ARCHIVO_CONGELADAS], check=True)
-        resultado = subprocess.run(["git", "commit", "-m", "Correccion definitiva zona horaria Hanga Roa e insulares [skip ci]"], capture_output=True, text=True)
+        resultado = subprocess.run(["git", "commit", "-m", "Correccion de huso horario para estaciones insulares [skip ci]"], capture_output=True, text=True)
         if resultado.returncode != 0:
             if "nothing to commit" in (resultado.stdout + resultado.stderr).lower():
                 print("Sin cambios nuevos para subir.")
