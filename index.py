@@ -110,12 +110,6 @@ ESTACIONES_DIRECTEMAR = [
         "lon": -71.631,
     },
     {
-        "nombre": "Gobernacion Maritima de Valparaiso",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/valparaiso/index.htm",
-        "lat": -33.036,
-        "lon": -71.625,
-    },
-    {
         "nombre": "Faro Punta Panul San Antonio",
         "url": "http://web.directemar.cl/met/jturno/estaciones/panul/index.htm",
         "lat": -33.578,
