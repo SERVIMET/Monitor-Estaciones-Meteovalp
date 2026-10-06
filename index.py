@@ -11,7 +11,7 @@ import urllib.request
 # ==========================================
 # CONFIGURACION GENERAL
 # ==========================================
-TOLERANCIA_MINUTOS = 12
+TOLERANCIA_MINUTOS = 15
 LIMITE_LECTURAS_REPETIDAS = 10
 ZONA_CHILE = ZoneInfo("America/Santiago")
 ZONA_PASCUA = ZoneInfo("Pacific/Easter")
@@ -143,7 +143,6 @@ ESTACIONES_WEATHERLINK = [
     },
 ]
 
-# Lista para el orden visual en la grilla y mapa
 ORDEN_ESTACIONES = [
     "Capitania de Puerto Chanaral",
     "Capitania de Puerto Caldera",
@@ -158,7 +157,6 @@ ORDEN_ESTACIONES = [
     "WL Chilquinta Muelle Baron (Valparaiso)",
     "Dique Flotante Valparaiso III",
     "Faro Extremo Molo de Abrigo Valparaiso",
-    "Gobernacion Maritima de Valparaiso",
     "Cofradia Nautica del Pacifico (Algarrobo)",
     "Faro Punta Panul San Antonio",
     "Capitania de Puerto Juan Fernandez",
@@ -470,7 +468,7 @@ def generar_html(resultados_totales, hay_alerta):
         footer_texto = f"Reporte: {r['ultimo']}"
 
         if r['dir_viento']:
-            viento_contenido = f'<span style="display: block; font-size: 0.58em; color: var(--wind-color, #1d4ed8); font-weight: 800; line-height: 1.1;">🌬️ {r["dir_viento"]}</span><span style="display: block; font-size: 0.72em; font-weight: 700; line-height: 1.1;">{r["viento"]}</span>'
+            viento_contenido = f'<span style="display: block; font-size: 0.58em; color: var(--wind-color, #1d4ed8); font-weight: 800; line-height: 1.1;">🌬️️ {r["dir_viento"]}</span><span style="display: block; font-size: 0.72em; font-weight: 700; line-height: 1.1;">{r["viento"]}</span>'
         else:
             viento_contenido = f'<span style="display: block; font-size: 0.58em; color: transparent; font-weight: 800; line-height: 1.1; user-select: none;">-</span><span style="display: block; font-size: 0.72em; font-weight: 700; line-height: 1.1;">{r["viento"]}</span>'
 
@@ -671,201 +669,4 @@ def generar_html(resultados_totales, hay_alerta):
         
         .footer-dev {{ background: linear-gradient(135deg, #0f2942, #1e3a8a); color: #f8fafc; text-align: center; font-weight: 600; padding: 10px 24px; border-radius: 30px; margin: 30px auto 15px auto; display: table; font-size: 13px; box-shadow: 0 4px 12px rgba(15, 41, 66, 0.2); border: 1px solid rgba(255,255,255,0.15); }}
         
-        .floating-controls {{
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            z-index: 1000;
-        }}
-
-        .icon-btn {{
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--summary-bg);
-            color: var(--text-color);
-            border: 1px solid var(--summary-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transition: all 0.2s ease;
-            padding: 0;
-        }}
-        
-        .icon-btn:hover {{
-            transform: scale(1.1);
-        }}
-
-        .wind-unit-btn {{
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }}
-
-        @media (max-width: 600px) {{
-            h1 {{
-                padding-right: 45px;
-                font-size: 19px;
-            }}
-            .floating-controls {{
-                top: 8px;
-                right: 8px;
-            }}
-            .icon-btn {{
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
-            }}
-            .wind-unit-btn {{
-                font-size: 10px;
-            }}
-        }}
-    </style>
-</head>
-<body class="{alerta_class}">
-    <div class="floating-controls">
-        <button class="icon-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Cambiar Modo Oscuro/Claro">🌙</button>
-        <button class="icon-btn wind-unit-btn" onclick="toggleWindUnit()" id="windUnitBtn" title="Cambiar Unidad de Viento">kt</button>
-    </div>
-    <h1>Monitor de Estaciones Automaticas</h1>
-    <div class="subtitle-line2">Centro Zonal de Meteorologia Marina de Talcahuano</div>
-    <div class="subtitle">Ultima verificacion: {hora_actual_chile} (Tolerancia: {TOLERANCIA_MINUTOS} min)</div>
-    {alerta_banner}
-    <div class="summary">Estaciones Operativas: {operativas} de {total_estaciones}</div>
-    <div id="map"></div>
-    <div class="grid">
-        {cards_html}
-    </div>
-    <div style="text-align: center;">
-        <div class="footer-dev">Sgto 2 (Met) Luis Diego Achurra Garces</div>
-    </div>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        var map = L.map('map').setView([-30.5, -71.5], 6);
-        L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
-            maxZoom: 12, attribution: '© OpenStreetMap contributors'
-        }}).addTo(map);
-        {markers_js}
-
-        function toggleDarkMode() {{
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
-            updateButtonText(isDark);
-        }}
-
-        function updateButtonText(isDark) {{
-            const btn = document.getElementById('darkModeBtn');
-            if (btn) btn.innerHTML = isDark ? '☀️' : '🌙';
-        }}
-
-        if (localStorage.getItem('darkMode') === 'enabled') {{
-            document.body.classList.add('dark-mode');
-            updateButtonText(true);
-        }}
-
-        let windInKnots = true;
-
-        function toggleWindUnit() {{
-            windInKnots = !windInKnots;
-            localStorage.setItem('windUnit', windInKnots ? 'kt' : 'khr');
-            updateWindDisplay();
-        }}
-
-        function updateWindDisplay() {{
-            const btn = document.getElementById('windUnitBtn');
-            if (btn) btn.innerHTML = windInKnots ? 'kt' : 'kmh';
-
-            const itemBoxes = document.querySelectorAll('.card-body-content .item-box');
-            itemBoxes.forEach(box => {{
-                let text = box.innerHTML;
-                if (text.includes('kt') || text.includes('k/hr')) {{
-                    box.innerHTML = text.replace(/([\d.,]+)\s*(kt|k\/hr)/gi, (match, p1, p2) => {{
-                        let num = parseFloat(p1.replace(',', '.'));
-                        if (isNaN(num)) return match;
-                        if (!windInKnots && p2.toLowerCase() === 'kt') {{
-                            let converted = (num * 1.852).toFixed(1).replace('.', ',');
-                            return `${{converted}} k/hr`;
-                        }} else if (windInKnots && p2.toLowerCase() !== 'kt') {{
-                            let converted = (num / 1.852).toFixed(1).replace('.', ',');
-                            return `${{converted}} kt`;
-                        }}
-                        return match;
-                    }});
-                }}
-            }});
-        }}
-
-        if (localStorage.getItem('windUnit') === 'khr') {{
-            windInKnots = false;
-            setTimeout(updateWindDisplay, 100);
-        }}
-    </script>
-</body>
-</html>"""
-
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(html)
-    print("✓ index.html actualizado correctamente.")
-
-def generar_json_esp32(resultados_totales):
-    estados_estaciones = [r['ok'] for r in resultados_totales]
-    data_json = {
-        "estaciones": estados_estaciones
-    }
-    
-    with open("estado_leds.json", "w", encoding="utf-8") as f:
-        json.dump(data_json, f)
-    print("✓ estado_leds.json generado con el total de estaciones.")
-
-def ejecutar_monitoreo():
-    print(f"\n--- [{obtener_hora_chile().strftime('%H:%M:%S')}] Verificando litoral ---")
-    resultados_dict = {}
-    hubo_fallas = False
-
-    for est in ESTACIONES_DIRECTEMAR:
-        ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_directemar(est)
-        if not ok: hubo_fallas = True
-        resultados_dict[est["nombre"]] = {
-            "nombre": est["nombre"], "url": est["url"], "lat": est["lat"], "lon": est["lon"],
-            "ok": ok, "estado": estado, "ultimo": ultimo, "temp": temp, "pres": pres,
-            "viento": viento, "dir_viento": dir_viento, "racha": racha, "precipitacion": precipitacion
-        }
-
-    for est_wl in ESTACIONES_WEATHERLINK:
-        ok, estado, ultimo, temp, pres, viento, dir_viento, racha, precipitacion = consultar_weatherlink(est_wl)
-        if not ok: hubo_fallas = True
-        resultados_dict[est_wl["nombre"]] = {
-            "nombre": est_wl["nombre"], "url": est_wl["url"], "lat": est_wl["lat"], "lon": est_wl["lon"],
-            "ok": ok, "estado": estado, "ultimo": ultimo, "temp": temp, "pres": pres,
-            "viento": viento, "dir_viento": dir_viento, "racha": racha, "precipitacion": precipitacion
-        }
-
-    resultados_totales = [resultados_dict[nombre] for nombre in ORDEN_ESTACIONES if nombre in resultados_dict]
-    
-    generar_html(resultados_totales, hubo_fallas)
-    generar_json_esp32(resultados_totales)
-    subir_a_github()
-
-def subir_a_github():
-    try:
-        print("Sincronizando cambios con GitHub...")
-        subprocess.run(["git", "add", "index.html", "estado_leds.json", ARCHIVO_HISTORIAL, ARCHIVO_CONGELADAS], check=True)
-        resultado = subprocess.run(["git", "commit", "-m", "Actualizar enlaces WeatherLink individuales [skip ci]"], capture_output=True, text=True)
-        if resultado.returncode != 0:
-            if "nothing to commit" in (resultado.stdout + resultado.stderr).lower():
-                print("Sin cambios nuevos para subir.")
-                return
-        subprocess.run(["git", "push"], check=True)
-        print("✓ Sincronización completada con éxito.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error al sincronizar con Git: {e}")
-
-if __name__ == "__main__":
-    ejecutar_monitoreo()
+        .floating-
