@@ -45,7 +45,7 @@ ESTACIONES_DIRECTEMAR = [
     },
     {
         "nombre": "Capitania de Puerto Hanga Roa",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/hangaroa/index.htm",
+        "url": "http://web.directemar.cl/met/jturno/estaciones/pascua/index.htm",
         "lat": -27.150,
         "lon": -109.429,
     },
