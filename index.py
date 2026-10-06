@@ -105,7 +105,7 @@ ESTACIONES_DIRECTEMAR = [
     },
     {
         "nombre": "Faro Extremo Molo de Abrigo Valparaiso",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/molo/index.htm",
+        "url": "http://web.directemar.cl/met/jturno/estaciones/valparaiso/index.htm",
         "lat": -33.036,
         "lon": -71.631,
     },
