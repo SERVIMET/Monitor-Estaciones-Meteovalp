@@ -123,7 +123,7 @@ ESTACIONES_DIRECTEMAR = [
     },
     {
         "nombre": "Capitania de Puerto Juan Fernandez",
-        "url": "http://web.directemar.cl/met/jturno/estaciones/juanfernandez/index.htm",
+        "url": "http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm",
         "lat": -33.635,
         "lon": -78.841,
     },
