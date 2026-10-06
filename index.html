@@ -225,9 +225,9 @@
     </div>
     <h1>Monitor de Estaciones Automaticas</h1>
     <div class="subtitle-line2">Centro Zonal de Meteorologia Marina de Talcahuano</div>
-    <div class="subtitle">Ultima verificacion: 06-10-2026 02:01:24 (Tolerancia: 12 min)</div>
+    <div class="subtitle">Ultima verificacion: 06-10-2026 02:03:35 (Tolerancia: 12 min)</div>
     <div class="banner-alerta">⚠️ ¡ATENCION: HAY ESTACIONES CON FALLAS, DESACTUALIZADAS O CONGELADAS! ⚠️</div>
-    <div class="summary">Estaciones Operativas: 6 de 17</div>
+    <div class="summary">Estaciones Operativas: 5 de 17</div>
     <div id="map"></div>
     <div class="grid">
         
@@ -622,10 +622,10 @@
         </a>
         
         <a href="http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm" target="_blank" class="card-link">
-            <div class="card ok">
+            <div class="card error">
                 <div class="card-header">
                     <span class="station-name">Capitania de Puerto Juan Fernandez</span>
-                    <span class="status-badge">🟢</span>
+                    <span class="status-badge">🔴</span>
                 </div>
                 
             <div class="card-body-content">
@@ -745,8 +745,8 @@
         }).addTo(map).bindPopup("<b>Faro Punta Panul San Antonio</b><br>Estado: CONGELADA (10 lect. iguales)<br>Temp: 13.8°C | Viento: 9.4 kt (NE) | Racha: 13.9 kt | Pres: 1014.1 hPa | Lluvia: 1.6 mm<br>Reporte: 05-10-2026 23:50:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/panul/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-33.635, -78.841], {
-            color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Juan Fernandez</b><br>Estado: OPERATIVA<br>Temp: 15.4°C | Viento: 5.6 kt (N/NW) | Racha: 14.8 kt | Pres: 1003.6 hPa | Lluvia: 0.2 mm<br>Reporte: 06-10-2026 02:00:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm' target='_blank'>Abrir enlace ↗</a>");
+            color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Juan Fernandez</b><br>Estado: DESACTUALIZADA (117 min)<br>Temp: 15.4°C | Viento: 5.6 kt (N/NW) | Racha: 14.8 kt | Pres: 1003.6 hPa | Lluvia: 0.2 mm<br>Reporte: 06-10-2026 02:00:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-34.391, -72.001], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
