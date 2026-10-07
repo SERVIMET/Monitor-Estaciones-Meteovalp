@@ -225,9 +225,9 @@
     </div>
     <h1>Monitor de Estaciones Automaticas</h1>
     <div class="subtitle-line2">Centro Zonal de Meteorologia Marina de Talcahuano</div>
-    <div class="subtitle">Ultima verificacion: 07-10-2026 02:51:15 (Tolerancia: 12 min)</div>
+    <div class="subtitle">Ultima verificacion: 07-10-2026 02:56:12 (Tolerancia: 12 min)</div>
     <div class="banner-alerta">⚠️ ¡ATENCION: HAY ESTACIONES CON FALLAS, DESACTUALIZADAS O CONGELADAS! ⚠️</div>
-    <div class="summary">Estaciones Operativas: 7 de 17</div>
+    <div class="summary">Estaciones Operativas: 6 de 17</div>
     <div id="map"></div>
     <div class="grid">
         
@@ -336,10 +336,10 @@
         </a>
         
         <a href="http://web.directemar.cl/met/jturno/estaciones/tortuga/index.htm" target="_blank" class="card-link">
-            <div class="card ok">
+            <div class="card error">
                 <div class="card-header">
                     <span class="station-name">Faro Punta Tortuga Coquimbo</span>
-                    <span class="status-badge">🟢</span>
+                    <span class="status-badge">🔴</span>
                 </div>
                 
             <div class="card-body-content">
@@ -701,8 +701,8 @@
         }).addTo(map).bindPopup("<b>Capitania de Puerto Huasco</b><br>Estado: OPERATIVA<br>Temp: 15.9°C | Viento: 3.5 kt (E/NE) | Racha: 4.3 kt | Pres: 1012.6 hPa ↘ | Lluvia: 0.0 mm<br>Reporte: 07-10-2026 02:50:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/huasco/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-29.939, -71.352], {
-            color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Faro Punta Tortuga Coquimbo</b><br>Estado: OPERATIVA<br>Temp: 16.7°C | Viento: 0.0 kt (N) | Racha: 0.0 kt | Pres: 1013.1 hPa ↘ | Lluvia: 0.0 mm<br>Reporte: 07-10-2026 02:50:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/tortuga/index.htm' target='_blank'>Abrir enlace ↗</a>");
+            color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
+        }).addTo(map).bindPopup("<b>Faro Punta Tortuga Coquimbo</b><br>Estado: CONGELADA (10 lect. iguales)<br>Temp: 16.7°C | Viento: 0.0 kt (N) | Racha: 0.0 kt | Pres: 1013.1 hPa ↘ | Lluvia: 0.0 mm<br>Reporte: 07-10-2026 02:50:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/tortuga/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-31.916, -71.516], {
             color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
