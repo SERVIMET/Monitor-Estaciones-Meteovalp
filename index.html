@@ -225,9 +225,9 @@
     </div>
     <h1>Monitor de Estaciones Automaticas</h1>
     <div class="subtitle-line2">Centro Zonal de Meteorologia Marina de Talcahuano</div>
-    <div class="subtitle">Ultima verificacion: 06-10-2026 21:31:17 (Tolerancia: 12 min)</div>
+    <div class="subtitle">Ultima verificacion: 06-10-2026 21:36:13 (Tolerancia: 12 min)</div>
     <div class="banner-alerta">⚠️ ¡ATENCION: HAY ESTACIONES CON FALLAS, DESACTUALIZADAS O CONGELADAS! ⚠️</div>
-    <div class="summary">Estaciones Operativas: 6 de 17</div>
+    <div class="summary">Estaciones Operativas: 5 de 17</div>
     <div id="map"></div>
     <div class="grid">
         
@@ -388,10 +388,10 @@
         </a>
         
         <a href="http://web.directemar.cl/met/jturno/estaciones/quintero/index.htm" target="_blank" class="card-link">
-            <div class="card ok">
+            <div class="card error">
                 <div class="card-header">
                     <span class="station-name">Capitania de Puerto Quintero</span>
-                    <span class="status-badge">🟢</span>
+                    <span class="status-badge">🔴</span>
                 </div>
                 
             <div class="card-body-content">
@@ -709,8 +709,8 @@
         }).addTo(map).bindPopup("<b>Capitania de Puerto Los Vilos</b><br>Estado: OPERATIVA<br>Temp: 16.4°C | Viento: 10.2 kt (N/NW) | Racha: 13.0 kt | Pres: 1010.7 hPa ↗ | Lluvia: 0.6 mm<br>Reporte: 06-10-2026 21:30:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/losvilos/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-32.778, -71.531], {
-            color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Quintero</b><br>Estado: OPERATIVA<br>Temp: 13.0°C | Viento: 12.5 kt (E) | Racha: 15.7 kt | Pres: 1012.1 hPa ↗ | Lluvia: 20.4 mm<br>Reporte: 06-10-2026 21:20:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/quintero/index.htm' target='_blank'>Abrir enlace ↗</a>");
+            color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Quintero</b><br>Estado: DESACTUALIZADA (15 min)<br>Temp: 13.0°C | Viento: 12.5 kt (E) | Racha: 15.7 kt | Pres: 1012.1 hPa ↗ | Lluvia: 20.4 mm<br>Reporte: 06-10-2026 21:20:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/quintero/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-32.952, -71.553], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
@@ -742,7 +742,7 @@
         
         L.circleMarker([-33.578, -71.616], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Faro Punta Panul San Antonio</b><br>Estado: DESACTUALIZADA (30 min)<br>Temp: 13.3°C | Viento: 0.0 kt (N) | Racha: 0.0 kt | Pres: 1013.1 hPa ↗ | Lluvia: 41.0 mm<br>Reporte: 06-10-2026 21:00:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/panul/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Faro Punta Panul San Antonio</b><br>Estado: CONGELADA (10 lect. iguales)<br>Temp: 13.3°C | Viento: 0.0 kt (N) | Racha: 0.0 kt | Pres: 1013.1 hPa ↗ | Lluvia: 41.0 mm<br>Reporte: 06-10-2026 21:00:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/panul/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-33.635, -78.841], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
@@ -750,7 +750,7 @@
         
         L.circleMarker([-34.391, -72.001], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Pichilemu</b><br>Estado: DESACTUALIZADA (15 min)<br>Temp: 13.3°C | Viento: 16.8 kt (N/NE) | Racha: 23.5 kt | Pres: 1011.5 hPa ↗ | Lluvia: 0.4 mm<br>Reporte: 06-10-2026 21:15:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/pichilemu/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Pichilemu</b><br>Estado: DESACTUALIZADA (20 min)<br>Temp: 13.3°C | Viento: 16.8 kt (N/NE) | Racha: 23.5 kt | Pres: 1011.5 hPa ↗ | Lluvia: 0.4 mm<br>Reporte: 06-10-2026 21:15:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/pichilemu/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
 
         function toggleDarkMode() {
