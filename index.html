@@ -225,9 +225,9 @@
     </div>
     <h1>Monitor de Estaciones Automaticas</h1>
     <div class="subtitle-line2">Centro Zonal de Meteorologia Marina de Talcahuano</div>
-    <div class="subtitle">Ultima verificacion: 08-10-2026 13:41:20 (Tolerancia: 12 min)</div>
+    <div class="subtitle">Ultima verificacion: 08-10-2026 13:46:22 (Tolerancia: 12 min)</div>
     <div class="banner-alerta">⚠️ ¡ATENCION: HAY ESTACIONES CON FALLAS, DESACTUALIZADAS O CONGELADAS! ⚠️</div>
-    <div class="summary">Estaciones Operativas: 7 de 17</div>
+    <div class="summary">Estaciones Operativas: 6 de 17</div>
     <div id="map"></div>
     <div class="grid">
         
@@ -310,10 +310,10 @@
         </a>
         
         <a href="http://web.directemar.cl/met/jturno/estaciones/huasco/index.htm" target="_blank" class="card-link">
-            <div class="card ok">
+            <div class="card error">
                 <div class="card-header">
                     <span class="station-name">Capitania de Puerto Huasco</span>
-                    <span class="status-badge">🟢</span>
+                    <span class="status-badge">🔴</span>
                 </div>
                 
             <div class="card-body-content">
@@ -656,18 +656,18 @@
                 
             <div class="card-body-content">
                 <div class="row-top">
-                    <div class="item-box temp-box">🌡️ 17.1°C</div>
-                    <div class="item-box"><span style="display: block; font-size: 0.58em; color: var(--wind-color, #1d4ed8); font-weight: 800; line-height: 1.1;">🌬️ NW</span><span style="display: block; font-size: 0.72em; font-weight: 700; line-height: 1.1;">5.9 kt</span></div>
+                    <div class="item-box temp-box">🌡️ 16.9°C</div>
+                    <div class="item-box"><span style="display: block; font-size: 0.58em; color: var(--wind-color, #1d4ed8); font-weight: 800; line-height: 1.1;">🌬️ NW</span><span style="display: block; font-size: 0.72em; font-weight: 700; line-height: 1.1;">6.0 kt</span></div>
                     <div class="item-box"><span style="font-size: 0.58em; color: var(--wind-color, #1d4ed8); font-weight: 800; display: block; line-height: 1.1;">💨 RACHA</span><span style="font-size: 0.72em; font-weight: 700; line-height: 1.1;">7.8 kt</span></div>
                 </div>
                 <div class="row-bottom">
-                    <div class="item-box"><span style="font-size: 0.68em; font-weight: 700;">⏲️ 1016.2 hPa ↗</span></div>
+                    <div class="item-box"><span style="font-size: 0.68em; font-weight: 700;">⏲️ 1016.3 hPa ↗</span></div>
                     <div class="item-box"><span style="font-size: 0.68em; font-weight: 700;">🌧️ 0.2 mm</span></div>
                 </div>
             </div>
         
                 <div class="card-footer-info">
-                    <span class="time">Reporte: 08-10-2026 13:30:01</span>
+                    <span class="time">Reporte: 08-10-2026 13:45:00</span>
                     <span class="click-text">Ver ↗</span>
                 </div>
             </div>
@@ -697,8 +697,8 @@
         }).addTo(map).bindPopup("<b>Capitania de Puerto Hanga Roa</b><br>Estado: SIN FECHA<br>Temp: 19.4°C | Viento: 7.2 kt (SW) | Racha: 14.8 kt | Pres: 1015.1 hPa ↗ | Lluvia: 36.4 mm<br>Reporte: N/D<br><a href='http://web.directemar.cl/met/jturno/estaciones/pascua/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-28.468, -71.226], {
-            color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Huasco</b><br>Estado: OPERATIVA<br>Temp: 19.0°C | Viento: 6.7 kt (S/SW) | Racha: 9.6 kt | Pres: 1017.2 hPa ➔ | Lluvia: 0.0 mm<br>Reporte: 08-10-2026 13:30:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/huasco/index.htm' target='_blank'>Abrir enlace ↗</a>");
+            color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Huasco</b><br>Estado: DESACTUALIZADA (15 min)<br>Temp: 19.0°C | Viento: 6.7 kt (S/SW) | Racha: 9.6 kt | Pres: 1017.2 hPa ➔ | Lluvia: 0.0 mm<br>Reporte: 08-10-2026 13:30:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/huasco/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-29.939, -71.352], {
             color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
@@ -746,11 +746,11 @@
         
         L.circleMarker([-33.635, -78.841], {
             color: 'red', fillColor: 'red', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Juan Fernandez</b><br>Estado: DESACTUALIZADA (119 min)<br>Temp: 14.2°C | Viento: 9.2 kt (SE) | Racha: 18.3 kt | Pres: 1016.4 hPa ↗ | Lluvia: 0.6 mm<br>Reporte: 08-10-2026 13:40:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Juan Fernandez</b><br>Estado: DESACTUALIZADA (114 min)<br>Temp: 14.2°C | Viento: 9.2 kt (SE) | Racha: 18.3 kt | Pres: 1016.4 hPa ↗ | Lluvia: 0.6 mm<br>Reporte: 08-10-2026 13:40:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/cumberland/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
         L.circleMarker([-34.391, -72.001], {
             color: 'green', fillColor: 'green', fillOpacity: 0.8, radius: 9
-        }).addTo(map).bindPopup("<b>Capitania de Puerto Pichilemu</b><br>Estado: OPERATIVA<br>Temp: 17.1°C | Viento: 5.9 kt (NW) | Racha: 7.8 kt | Pres: 1016.2 hPa ↗ | Lluvia: 0.2 mm<br>Reporte: 08-10-2026 13:30:01<br><a href='http://web.directemar.cl/met/jturno/estaciones/pichilemu/index.htm' target='_blank'>Abrir enlace ↗</a>");
+        }).addTo(map).bindPopup("<b>Capitania de Puerto Pichilemu</b><br>Estado: OPERATIVA<br>Temp: 16.9°C | Viento: 6.0 kt (NW) | Racha: 7.8 kt | Pres: 1016.3 hPa ↗ | Lluvia: 0.2 mm<br>Reporte: 08-10-2026 13:45:00<br><a href='http://web.directemar.cl/met/jturno/estaciones/pichilemu/index.htm' target='_blank'>Abrir enlace ↗</a>");
         
 
         function toggleDarkMode() {
